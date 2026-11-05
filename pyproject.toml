@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quill"
+version = "1.4.0"
+description = "Fill, auto-fill and sign PDF forms on your own computer"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = ["pymupdf==2.1"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+quill = "quill:main"
+
+[tool.setuptools]
+py-modules = ["quill", "quill_blanks", "quill_sign", "quill_profile"]
