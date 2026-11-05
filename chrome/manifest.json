@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Quill",
+  "version": "2.0",
+  "description": "Fill, auto-fill or sign the PDF in this tab with Quill on your computer.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2HPXPmmQAkImHXlC+vdmlrFgSnTj8+r7kGl4G9WsC0Y7yDNvAJVb0s/2y6hNFOJROg5lPgzKwzx25FqAJdXPKErJ4I82+ZxX8KWbAP6hQZbO8e47SGjb6yeWVzZzRUi7NLS6pJs+YHXfWGoCDR10Y9tQju1PXdpfeUM35jYUAOGnvS5MhfQ4Yh0NEyqH1aLRArJaoHS1E72SWgwGSG3ormMIxH3s3dQ+b2XrdSmFRzz/o810+uqUIkaOpjq5+UDNMBM7F/KC/PEzvdDOpB0eugvncKEVJzQdCMmBC1JWxSUG9o4+fLO80DFniIRhursPL6a9P9WRfFZzn/l3tNUhSQIDAQAB",
+  "action": { "default_title": "Quill", "default_popup": "popup.html", "default_icon": "icon.png" },
+  "icons": { "128": "icon.png" },
+  "permissions": ["activeTab", "downloads", "nativeMessaging"]
+}

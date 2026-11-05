@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quill</title>
+<style>
+  /* Chrome's own menu look: system font, neutral greys, rows that highlight. */
+  :root { --bg: #fff; --fg: #1f1f1f; --muted: #5e5e5e; --line: #e3e3e3; --hover: #f2f2f2;
+          --field: #fff; --border: #c7c7c7; --focus: #0b57d0; --error: #b3261e; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #292a2d; --fg: #e3e3e3; --muted: #a8a8a8; --line: #3c3d40; --hover: #37383b;
+            --field: #202124; --border: #5f6368; --focus: #a8c7fa; --error: #f2b8b5; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; width: 320px; max-height: 560px; overflow-y: auto; background: var(--bg);
+         color: var(--fg); font: 13px/1.4 system-ui, "Segoe UI", sans-serif; }
+  .head { padding: 10px 16px 8px; color: var(--muted); font-size: 12px;
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sep { height: 1px; background: var(--line); margin: 4px 0; }
+  .row { display: block; width: 100%; padding: 7px 16px; border: 0; background: none;
+         color: inherit; font: inherit; text-align: left; cursor: default; }
+  .row:hover:not(:disabled), .row:focus-visible { background: var(--hover); outline: none; }
+  .row:disabled { color: var(--muted); }
+  .row small { display: block; color: var(--muted); font-size: 12px; }
+  .note { padding: 6px 16px 10px; color: var(--muted); font-size: 12px; }
+  .note.error { color: var(--error); }
+  form { padding: 4px 16px 12px; }
+  label.q { display: block; margin-top: 10px; }
+  label.q span { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  input[type=text], select { width: 100%; font: inherit; color: inherit; background: var(--field);
+                             border: 1px solid var(--border); border-radius: 4px; padding: 5px 7px; }
+  input:focus, select:focus { outline: 2px solid var(--focus); outline-offset: -1px; }
+  label.check { display: flex; gap: 8px; align-items: baseline; margin-top: 10px; }
+  details { margin-top: 12px; }
+  summary { color: var(--muted); font-size: 12px; cursor: default; }
+  .buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+  .buttons button { font: inherit; color: inherit; background: none; border: 1px solid var(--border);
+                    border-radius: 4px; padding: 5px 14px; }
+  .buttons button[type=submit] { background: var(--focus); border-color: var(--focus); color: var(--bg); }
+  .buttons button:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="head" id="file">Quill</div>
+<div class="sep"></div>
+<div id="menu"></div>
+<form id="questions" hidden></form>
+<div class="note" id="note">Reading the form</div>
+<script src="popup.js"></script>
+</body>
+</html>

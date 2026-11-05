@@ -16,5 +16,8 @@ test = ["pytest"]
 [project.scripts]
 quill = "quill:main"
 
+[project.gui-scripts]
+quill-host = "quill:host_entry"
+
 [tool.setuptools]
-py-modules = ["quill", "quill_blanks", "quill_sign", "quill_profile"]
+py-modules = ["quill"]

@@ -49,6 +49,13 @@ $menuItems = @(
     @{ Key = 'quill3sign'; Text = 'Sign with Quill'; Args = 'sign --open --pause' }
 )
 
+$linkKey = Join-Path $classes 'quill'   # old quill:// link type (removed in 2.0)
+# Chrome's Quill panel talks to bin\quill-host.exe ("native messaging")
+$hostName = 'com.silkeesmooth.quill'
+$hostKey = 'HKCU:\Software\Google\Chrome\NativeMessagingHosts\' + $hostName
+$hostExe = Join-Path $bin 'quill-host.exe'
+$hostJson = Join-Path $bin ($hostName + '.json')
+
 function Remove-PdfMenu {
     foreach ($shell in @($pdfShells + $oldShells | Select-Object -Unique)) {
         foreach ($k in @(Get-ChildItem -LiteralPath $shell -ErrorAction SilentlyContinue |
@@ -56,6 +63,8 @@ function Remove-PdfMenu {
             Remove-Item -LiteralPath $k.PSPath -Recurse -Force -Confirm:$false
         }
     }
+    Remove-Item -LiteralPath $linkKey -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $hostKey -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue
 }
 
 function Update-ShellMenus {
@@ -116,6 +125,7 @@ if ($LASTEXITCODE -ne 0) { throw 'pip install failed.' }
 # 2. One exe on PATH (not the whole venv, which would shadow your `python`)
 New-Item -ItemType Directory -Force $bin | Out-Null
 Copy-Item (Join-Path $here '.venv\Scripts\quill.exe') $exe -Force
+Copy-Item (Join-Path $here '.venv\Scripts\quill-host.exe') $hostExe -Force
 if (-not $NoPath) {
     $parts = Split-PathList (Get-UserPath)
     if (-not ($parts | Where-Object { $_.TrimEnd('\') -eq $bin.TrimEnd('\') })) {
@@ -150,10 +160,23 @@ if (-not $NoMenu) {
             Set-Item -LiteralPath (Join-Path $key 'command') -Value ('"' + $exe + '" ' + $item.Args + ' "%1"')
         }
     }
+    # Chrome panel: only the Quill extension may start bin\quill-host.exe. Its ID
+    # comes from the public key in chrome\manifest.json, as Chrome computes it.
+    $key = (Get-Content (Join-Path $here 'chrome\manifest.json') -Raw | ConvertFrom-Json).key
+    $hash = [System.Security.Cryptography.SHA256]::Create().ComputeHash([Convert]::FromBase64String($key))
+    $hex = -join ($hash[0..15] | ForEach-Object { '{0:x2}' -f $_ })
+    $extId = -join ($hex.ToCharArray() | ForEach-Object { [char](97 + [Convert]::ToInt32([string]$_, 16)) })
+    $manifest = [ordered]@{ name = $hostName; description = 'Quill PDF forms'; path = $hostExe;
+                            type = 'stdio'; allowed_origins = @("chrome-extension://$extId/") }
+    $manifest | ConvertTo-Json | Set-Content -LiteralPath $hostJson -Encoding ASCII
+    New-Item -Path $hostKey -Force | Out-Null
+    Set-Item -LiteralPath $hostKey -Value $hostJson
+    Remove-Item -LiteralPath $linkKey -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue
     Update-ShellMenus
 }
 Write-Host ''
 Write-Host 'Done. Ways to use it:'
+Write-Host '  - In Chrome: the Quill toolbar button on a PDF tab (load the chrome folder once, see README)'
 Write-Host '  - Shift+right-click a PDF (or Show more options) > Fill in / Auto-fill / Sign with Quill'
 Write-Host '  - Right-click a PDF > Send to > Fill PDF form'
 Write-Host '  - Right-click a flat or scanned PDF > Send to > Make PDF fillable'
