@@ -1585,8 +1585,10 @@ def find_blanks(page: pymupdf.Page, avoid: list[pymupdf.Rect] | None = None) -> 
 # Signatures: save one once, then place it on forms
 # ============================================================================
 
-SIG_WORDS = re.compile(r"\b(signature|sign here|signed by)\b", re.I)
-DATE_WORDS = re.compile(r"\b(date|today'?s?)\b", re.I)
+# \b treats "_" as a letter, so "Signature______" (label and line printed as
+# one word) never matched. These edges count underscores as a break too.
+SIG_WORDS = re.compile(r"(?<![^\W_])(signature|sign here|signed by)(?![^\W_])", re.I)
+DATE_WORDS = re.compile(r"(?<![^\W_])(date|today'?s?)(?![^\W_])", re.I)
 TODAY = re.compile(r"\btoday", re.I)
 OFFICE = re.compile(r"office\s+use|official\s+use|do not write", re.I)
 NOT_TODAY = re.compile(r"\b(birth|dob|expir|issue[d]?)\b", re.I)

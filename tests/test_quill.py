@@ -1451,3 +1451,16 @@ def test_underscore_signature_line(tmp_path):
     s = spots[0]
     under = page.search_for("___")[0]
     assert s.rect.y1 <= under.y1 and s.rect.y1 > under.y1 - 6 and s.rect.x0 >= under.x0 - 1
+
+
+def test_signature_glued_to_underscores():
+    """'Signature______' with no space (one word in the text layer) still signs on the line."""
+    doc = pymupdf.open()
+    page = doc.new_page()
+    page.insert_text((72, 200), "Signature______________________________", fontsize=11)
+    page.insert_text((72, 230), "Date______________________________", fontsize=11)
+    spots = quill.find_spots(doc)
+    assert len(spots) == 1, [s.label for s in spots]
+    under = page.search_for("___")[0]
+    assert abs(spots[0].rect.y1 - under.y1) < 6
+    assert quill.DATE_WORDS.search("Date______") and not quill.SIG_WORDS.search("Signatures")
